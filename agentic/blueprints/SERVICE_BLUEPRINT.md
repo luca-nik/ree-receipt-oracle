@@ -150,6 +150,44 @@ QUOTE_TTL_SECONDS: int    # Default 300
 
 ---
 
+## 3b. Agent Interaction Flow
+
+```
+Agent                        Oracle                        x402 Facilitator       REE (Docker)
+  |                             |                                  |                    |
+  |-- POST /quote {receipt} --> |                                  |                    |
+  |                             | validate model in lookup table   |                    |
+  |                             | compute SHA256(receipt) = hash   |                    |
+  |                             | store {hash -> price, TTL=5min}  |                    |
+  |<-- 200 {hash, price, exp} --|                                  |                    |
+  |                             |                                  |                    |
+  | [agent decides to accept]   |                                  |                    |
+  |                             |                                  |                    |
+  |-- POST /verify {receipt} -> |                                  |                    |
+  |   (no PAYMENT-SIGNATURE)    | look up hash in cache            |                    |
+  |                             | build PaymentRequirements(price) |                    |
+  |<-- 402 PAYMENT-REQUIRED  ---|                                  |                    |
+  |   (base64 PaymentRequired)  |                                  |                    |
+  |                             |                                  |                    |
+  | [agent signs payment]       |                                  |                    |
+  |                             |                                  |                    |
+  |-- POST /verify {receipt} -> |                                  |                    |
+  |   PAYMENT-SIGNATURE: <b64>  | decode PaymentPayload            |                    |
+  |                             |-- verify_payment(payload) -----> |                    |
+  |                             |<-- {is_valid: true} ------------ |                    |
+  |                             |-- settle_payment(payload) -----> |                    |
+  |                             |<-- {success, tx_hash} ---------- |                    |
+  |                             |                                  |                    |
+  |                             |-- ree.sh verify --receipt-path <tmp> -------------- >|
+  |                             |<-- exit 0 (valid) or exit 1 (invalid) --------------|
+  |                             |                                  |                    |
+  |<-- 200 {valid, hash, tx} ---|                                  |                    |
+```
+
+**Key invariant:** payment is settled before REE runs. If REE fails after settlement, the agent has paid but the result is `valid: false` with an error — not a refund scenario in V1.
+
+---
+
 ## 4. Architectural Decisions
 
 1. **Manual x402 handling (no middleware)** — The standard `PaymentMiddlewareASGI` uses static per-route prices. Since `/verify` needs dynamic pricing from the quote cache, we handle the x402 flow manually inside the route handler using `build_payment_requirements`, `verify_payment`, and `settle_payment` directly. This gives full control without fighting the library.
