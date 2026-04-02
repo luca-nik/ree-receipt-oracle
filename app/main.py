@@ -1,5 +1,6 @@
 """REE Receipt Oracle — FastAPI entrypoint."""
 
+import asyncio
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -10,7 +11,8 @@ from .routes.verify import _x402_server, router as verify_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await _x402_server.initialize()
+    # initialize() is sync (calls get_supported() via HTTP); run in thread to avoid blocking loop
+    await asyncio.to_thread(_x402_server.initialize)
     yield
 
 

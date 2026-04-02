@@ -127,7 +127,7 @@ Imports needed:
 ---
 
 ## T-09 · Smoke test
-**Status:** pending  
+**Status:** completed  
 **Depends on:** T-08
 
 Manual local test to verify the full flow works end-to-end:
