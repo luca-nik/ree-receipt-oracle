@@ -77,7 +77,7 @@ Load env vars via `python-dotenv`. Expose module-level constants:
 ---
 
 ## T-07 · app/routes/verify.py
-**Status:** pending  
+**Status:** completed  
 **Depends on:** T-04, T-05
 
 Module-level x402 setup (instantiated once):
@@ -114,7 +114,7 @@ Imports needed:
 ---
 
 ## T-08 · app/main.py
-**Status:** pending  
+**Status:** completed  
 **Depends on:** T-06, T-07
 
 - Create `FastAPI` app with title/description/version
