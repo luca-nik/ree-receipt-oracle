@@ -16,7 +16,12 @@ class QuoteRequest(BaseModel):
 
 @router.post("/quote")
 async def quote(body: QuoteRequest) -> JSONResponse:
-    model_name = body.receipt.get("model")
+    model_field = body.receipt.get("model")
+    # Real REE receipts have model as {"name": "...", ...}; simple receipts use a plain string
+    if isinstance(model_field, dict):
+        model_name = model_field.get("name")
+    else:
+        model_name = model_field
     if not model_name:
         return JSONResponse(
             status_code=400,

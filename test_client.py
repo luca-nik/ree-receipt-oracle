@@ -20,10 +20,49 @@ load_dotenv()
 BASE_URL = "http://localhost:8765"
 
 SAMPLE_RECEIPT = {
-    "model": "Qwen/Qwen3-0.6B",
-    "prompt": "What is the capital of France?",
-    "output": "Paris",
-    "max_new_tokens": 50,
+  "version": "1.1.0",
+  "ree_version": "0.1.0",
+  "model": {
+    "name": "Qwen/Qwen3-0.6B",
+    "commit_hash": "c1899de289a04d12100db370d81485cdf75e47ca",
+    "config_hash": "sha256:01a2cd6eaa6ffadcfbf29bf5de383834dde68122b10edc73873d4a06b6758723"
+  },
+  "input": {
+    "prompt": "What is 2 + 2? Show your reasoning step by step.",
+    "prompt_hash": "sha256:5ab273c7b490ad51a15ef7b604cbcb98b8c3187cd677010f318e23c1a44bb0df",
+    "parameters": {
+      "max_new_tokens": 50,
+      "temperature": 1.0,
+      "top_k": 50,
+      "top_p": 1.0,
+      "min_p": None,
+      "repetition_penalty": 1.0,
+      "seed": 12345,
+      "operation_set": "default",
+      "rand_algorithm": "default",
+      "do_sample": True,
+      "eos_token": 151645,
+      "short_circuit_length": None,
+      "short_circuit_token": None,
+      "use_kv_cache": True,
+      "pad_token": 151645,
+      "vocab_size": 151936
+    },
+    "parameters_hash": "sha256:7da18a8599a9f93b28e02ddd267444cc7ba2409ce4fb3ed23c5ee9ac4d866ffe"
+  },
+  "output": {
+    "tokens_hash": "sha256:ae9504c4fb847718b35a8d2749e7390dc4d43ba865506c0326b7b338ced278d3",
+    "token_count": 50,
+    "finish_reason": "max_length",
+    "text_output": " Are there other ways to calculate this? Explain what other operations could be used?\n\nThe problem is presented in a math lesson in a class that has a lot of students. I cannot take it as an exercise, but I can say that I know it"
+  },
+  "execution": {
+    "device_type": "cpu",
+    "device_name": "aarch64"
+  },
+  "hashes": {
+    "receipt_hash": "sha256:655f0416b585aee52b306de1cf320cafc4f5a2f103fc8d5764386e62d73ac94e"
+  }
 }
 
 
@@ -144,7 +183,7 @@ async def main() -> None:
     print(f"\n  {'✓ RECEIPT VALID' if result['valid'] else '✗ RECEIPT INVALID'}")
     print(f"  Receipt hash: {result.get('receipt_hash', 'n/a')}")
     if result.get("error"):
-        print(f"\n  REE error:\n  {result['error'][:400]}")
+        print(f"\n  REE error:\n{result['error']}")
 
 
 if __name__ == "__main__":
