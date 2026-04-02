@@ -8,32 +8,28 @@ Agents submit a REE receipt and pay a small USDC fee to have it independently ve
 
 ## How it works
 
-```
-Agent                         Oracle                        Base Sepolia    REE (Docker)
-  │                              │                               │               │
-  │── POST /quote ──────────────>│                               │               │
-  │   { receipt }                │ look up model price           │               │
-  │                              │ cache { hash → price, 5min }  │               │
-  │<── 200 ──────────────────────│                               │               │
-  │   { receipt_hash, price }    │                               │               │
-  │                              │                               │               │
-  │── POST /verify ─────────────>│                               │               │
-  │   { receipt }                │ no payment header             │               │
-  │<── 402 ──────────────────────│                               │               │
-  │   PAYMENT-REQUIRED: <b64>    │ { scheme, amount, pay_to }    │               │
-  │                              │                               │               │
-  │   [agent signs payment]      │                               │               │
-  │                              │                               │               │
-  │── POST /verify ─────────────>│                               │               │
-  │   PAYMENT-SIGNATURE: <b64>   │ verify + settle payment ─────>│               │
-  │                              │<── { tx_hash } ───────────────│               │
-  │                              │                               │               │
-  │                              │── ree.sh verify ─────────────────────────────>│
-  │                              │<── PASSED / FAILED ───────────────────────────│
-  │                              │                               │               │
-  │<── 200 ──────────────────────│                               │               │
-  │   { valid, receipt_hash,     │                               │               │
-  │     tx_hash, error }         │                               │               │
+```mermaid
+sequenceDiagram
+    participant A as Agent
+    participant O as Oracle
+    participant B as Base Sepolia
+    participant R as REE (Docker)
+
+    A->>O: POST /quote { receipt }
+    O-->>A: 200 { receipt_hash, price_usdc }
+
+    A->>O: POST /verify { receipt }
+    O-->>A: 402 PAYMENT-REQUIRED (scheme, amount, pay_to)
+
+    Note over A: Agent signs payment
+
+    A->>O: POST /verify { receipt } + PAYMENT-SIGNATURE
+    O->>B: settle payment (USDC transfer)
+    B-->>O: { tx_hash }
+    O->>R: ree.sh verify --receipt-path
+    R-->>O: PASSED / FAILED
+
+    O-->>A: 200 { valid, receipt_hash, tx_hash, error }
 ```
 
 **Liability logic:**
