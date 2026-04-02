@@ -49,7 +49,7 @@ Load env vars via `python-dotenv`. Expose module-level constants:
 ---
 
 ## T-05 · app/ree_runner.py
-**Status:** pending  
+**Status:** completed  
 **Depends on:** T-02
 
 - `ReeResult` dataclass: `valid: bool`, `error: str | None`
@@ -64,7 +64,7 @@ Load env vars via `python-dotenv`. Expose module-level constants:
 ---
 
 ## T-06 · app/routes/quote.py
-**Status:** pending  
+**Status:** completed  
 **Depends on:** T-03, T-04
 
 `POST /quote`:
