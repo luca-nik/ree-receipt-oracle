@@ -44,6 +44,7 @@ Load env vars via `python-dotenv`. Expose module-level constants:
 - `store_quote(r_hash: str, price_usdc: str) -> QuoteEntry` — stores with TTL from config
 - `get_quote(r_hash: str) -> QuoteEntry | None` — returns entry if not expired, else deletes and returns None
 - Module-level `_cache: dict[str, QuoteEntry]`
+- Module-level `_lock = threading.Lock()` — wrap all `_cache` reads/writes with `with _lock:`
 
 ---
 
@@ -99,7 +100,7 @@ _x402_server.register(NETWORK, ExactEvmServerScheme())
    - Build `PaymentRequirements` with cached price
    - `await _x402_server.verify_payment(payload, requirement)` — return 402 `payment_invalid` if not valid
    - `await _x402_server.settle_payment(payload, requirement)` — return 402 `payment_settlement_failed` if not success
-   - `run_verify(body.receipt)` — blocking
+   - `ree_result = await asyncio.to_thread(run_verify, body.receipt)` — non-blocking
    - Return 200 `{"valid", "receipt_hash", "transaction_hash", "error"}` with `PAYMENT-RESPONSE` header
 
 Imports needed:
@@ -117,6 +118,7 @@ Imports needed:
 **Depends on:** T-06, T-07
 
 - Create `FastAPI` app with title/description/version
+- On startup (`@app.on_event("startup")`): call `await _x402_server.initialize()` imported from `routes.verify` — this fetches supported kinds from the facilitator; `build_payment_requirements` will raise `RuntimeError` if skipped
 - `app.include_router(quote_router)`
 - `app.include_router(verify_router)`
 - `GET /health` → `{"status": "ok"}`
