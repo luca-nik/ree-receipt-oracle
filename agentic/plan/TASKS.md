@@ -1,7 +1,7 @@
 # REE Receipt Oracle — Tasks
 
 ## T-01 · Project scaffolding
-**Status:** pending
+**Status:** completed
 
 Create the base project structure with no logic.
 
@@ -14,7 +14,7 @@ Create the base project structure with no logic.
 ---
 
 ## T-02 · app/config.py
-**Status:** pending  
+**Status:** completed  
 **Depends on:** T-01
 
 Load env vars via `python-dotenv`. Expose module-level constants:
@@ -27,7 +27,7 @@ Load env vars via `python-dotenv`. Expose module-level constants:
 ---
 
 ## T-03 · app/pricing.py
-**Status:** pending  
+**Status:** completed  
 **Depends on:** T-02
 
 - `MODEL_PRICES_USDC: dict[str, str]` — flat fee lookup table per blueprint §3
@@ -36,7 +36,7 @@ Load env vars via `python-dotenv`. Expose module-level constants:
 ---
 
 ## T-04 · app/cache.py
-**Status:** pending  
+**Status:** completed  
 **Depends on:** T-02
 
 - `QuoteEntry` dataclass: `receipt_hash: str`, `price_usdc: str`, `expires_at: float`
