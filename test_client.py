@@ -55,20 +55,29 @@ async def main() -> None:
     client = x402Client()
     register_exact_evm_client(client, EthAccountSigner(account))
 
-    async with x402HttpxClient(client) as http:
+    print("→ [1/3] Sending request (expecting 402)...")
+    print("→ [2/3] x402 client will sign payment and retry automatically...")
+    print("→ [3/3] Server will settle payment on-chain, then run REE verify (slow — up to 10 min)...")
+    print("    Waiting...\n")
+    async with x402HttpxClient(client, timeout=660.0) as http:
         resp = await http.post(
             f"{BASE_URL}/verify",
             json={"receipt": SAMPLE_RECEIPT},
         )
         await resp.aread()
 
+    print("→ Done.")
     print(f"Status: {resp.status_code}")
-    print(json.dumps(resp.json(), indent=2))
 
     if resp.status_code == 200:
         result = resp.json()
         print(f"\n{'✓ VALID' if result['valid'] else '✗ INVALID'}")
-        print(f"Transaction: {result.get('transaction_hash', 'n/a')}")
+        print(f"Receipt hash: {result.get('receipt_hash', 'n/a')}")
+        print(f"Transaction:  {result.get('transaction_hash', 'n/a')}")
+        if result.get("error"):
+            print(f"REE error:    {result['error'][:200]}...")
+    else:
+        print(json.dumps(resp.json(), indent=2))
 
 
 if __name__ == "__main__":
