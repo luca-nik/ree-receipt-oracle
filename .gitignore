@@ -1,4 +1,5 @@
 .env
+agentic/
 __pycache__/
 *.pyc
 *.pyo
