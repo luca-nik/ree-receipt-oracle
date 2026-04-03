@@ -159,9 +159,9 @@ async def main():
 
     result = await client.verify(receipt)
     if result.valid:
-        print("VALID — human accountable")
+        print("RECEIPT VALID")
     else:
-        print(f"INVALID — liability shifts: {result.error}")
+        print(f"RECEIPT INVALID: {result.error}")
 
 asyncio.run(main())
 ```

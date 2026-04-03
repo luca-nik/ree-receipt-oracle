@@ -33,15 +33,11 @@ async def verify_receipt(receipt: dict, oracle_url: str, private_key: str) -> Ve
 
 def handle_result(result: VerifyResult) -> None:
     if result.valid:
-        # Receipt is valid — inference was reproduced exactly.
-        # The prompt drove the output → human is accountable.
-        print("VALID — human accountable")
+        print("RECEIPT VALID")
         print(f"  receipt_hash:     {result.receipt_hash}")
         print(f"  transaction_hash: {result.transaction_hash}")
     else:
-        # Receipt is invalid — output cannot be reproduced.
-        # Model was tampered or compromised → liability shifts away from human.
-        print("INVALID — liability shifts")
+        print("RECEIPT INVALID")
         print(f"  receipt_hash: {result.receipt_hash}")
         print(f"  error:        {result.error}")
 
