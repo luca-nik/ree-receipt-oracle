@@ -25,7 +25,10 @@ app = typer.Typer()
 
 
 def _load_env(env_file: Optional[str]) -> None:
-    load_dotenv(env_file or ".env")
+    if env_file:
+        load_dotenv(env_file)
+    else:
+        load_dotenv()  # searches cwd and parent directories
 
 
 def _resolve_key(private_key: Optional[str]) -> Optional[str]:
