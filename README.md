@@ -155,7 +155,7 @@ async def main():
         oracle_url="http://localhost:8765",
         private_key=os.environ["ORACLE_CLIENT_PRIVATE_KEY"],
     )
-    receipt = json.load(open("test-receipts/receipt_20260402_173254.json"))
+    receipt = json.load(open("test-receipts/reproducible-receipt.json"))
 
     result = await client.verify(receipt)
     if result.valid:
@@ -172,10 +172,10 @@ See [`examples/agent_pipeline.py`](examples/agent_pipeline.py) for a full exampl
 
 ```bash
 # Price quote — free, no payment
-uv run ree-oracle quote test-receipts/receipt_20260402_173254.json
+uv run ree-oracle quote test-receipts/reproducible-receipt.json
 
 # Full verification — pays USDC, runs REE
-uv run ree-oracle verify test-receipts/receipt_20260402_173254.json
+uv run ree-oracle verify test-receipts/reproducible-receipt.json
 
 # Options
 uv run ree-oracle verify <receipt.json> --oracle-url http://other:8765 --private-key 0x...
@@ -226,7 +226,7 @@ uv run uvicorn app.main:app --port 8765
 
 In Terminal 2:
 ```bash
-uv run ree-oracle verify test-receipts/receipt_20260402_173254.json
+uv run ree-oracle verify test-receipts/reproducible-receipt.json
 ```
 
 ## License

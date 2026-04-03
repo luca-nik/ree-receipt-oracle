@@ -47,7 +47,8 @@ async def main() -> int:
 
     receipt_path = Path(sys.argv[1]) if len(sys.argv) > 1 else None
     if not receipt_path or not receipt_path.exists():
-        print(f"Usage: python examples/agent_pipeline.py <receipt.json>", file=sys.stderr)
+        print("Usage: python examples/agent_pipeline.py <receipt.json>", file=sys.stderr)
+        print("Example: python examples/agent_pipeline.py test-receipts/reproducible-receipt.json", file=sys.stderr)
         return 1
 
     oracle_url = os.environ.get("ORACLE_URL", "http://localhost:8765")
