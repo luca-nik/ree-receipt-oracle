@@ -141,9 +141,59 @@ Flat fee per model (USDC on Base Sepolia):
 | Qwen/Qwen3-14B | $0.20 |
 | Qwen/Qwen3-32B | $0.50 |
 
+## Client library
+
+Install and use `OracleClient` directly in your agent:
+
+```python
+import asyncio, json, os
+from ree_oracle_client import OracleClient
+from ree_oracle_client.exceptions import PaymentError, OracleNetworkError
+
+async def main():
+    client = OracleClient(
+        oracle_url="http://localhost:8765",
+        private_key=os.environ["ORACLE_CLIENT_PRIVATE_KEY"],
+    )
+    receipt = json.load(open("test-receipts/receipt_20260402_173254.json"))
+
+    result = await client.verify(receipt)
+    if result.valid:
+        print("VALID — human accountable")
+    else:
+        print(f"INVALID — liability shifts: {result.error}")
+
+asyncio.run(main())
+```
+
+See [`examples/agent_pipeline.py`](examples/agent_pipeline.py) for a full example with exception handling.
+
+## CLI
+
+```bash
+# Price quote — free, no payment
+uv run ree-oracle quote test-receipts/receipt_20260402_173254.json
+
+# Full verification — pays USDC, runs REE
+uv run ree-oracle verify test-receipts/receipt_20260402_173254.json
+
+# Options
+uv run ree-oracle verify <receipt.json> --oracle-url http://other:8765 --private-key 0x...
+```
+
+The private key is read from `ORACLE_CLIENT_PRIVATE_KEY` in `.env` automatically.
+
+`verify` prints step-by-step progress to stderr and final JSON to stdout, so it composes cleanly:
+
+```bash
+uv run ree-oracle verify receipt.json | jq .valid
+```
+
 ## Testing
 
-### 1. Generate a REE receipt
+Sample receipts are in `test-receipts/` — all generated with `Qwen/Qwen3-0.6B`, `operation_set: reproducible`.
+
+### Generate your own receipt
 
 ```bash
 cd /path/to/ree
@@ -154,7 +204,7 @@ cd /path/to/ree
 
 The receipt is saved to `~/.cache/gensyn/`.
 
-### 2. Confirm the receipt verifies with REE directly
+### Confirm with REE directly
 
 ```bash
 RECEIPT=$(find ~/.cache/gensyn -name "receipt_*.json" | sort | tail -1)
@@ -162,31 +212,22 @@ RECEIPT=$(find ~/.cache/gensyn -name "receipt_*.json" | sort | tail -1)
 # should print: VERIFICATION PASSED
 ```
 
-### 3. Run the test client
+### End-to-end test
+
+Add your wallet private key to `.env`:
+```env
+ORACLE_CLIENT_PRIVATE_KEY=0x...
+```
 
 In Terminal 1:
 ```bash
-cd /path/to/ree-receipt-oracle
 uv run uvicorn app.main:app --port 8765
 ```
 
 In Terminal 2:
 ```bash
-cd /path/to/ree-receipt-oracle
-
-# add your wallet private key to .env first:
-# CLIENT_PRIVATE_KEY=0x...
-
-RECEIPT=$(find ~/.cache/gensyn -name "receipt_*.json" | sort | tail -1)
-uv run python test_client.py $RECEIPT
+uv run ree-oracle verify test-receipts/receipt_20260402_173254.json
 ```
-
-The client walks through all 5 steps verbosely:
-1. Get quote
-2. Send verify (expects 402)
-3. Sign payment with wallet
-4. Retry with payment — settles on-chain, runs REE verify
-5. Print result + transaction hash
 
 ## License
 
