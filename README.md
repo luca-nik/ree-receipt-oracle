@@ -32,11 +32,8 @@ sequenceDiagram
     O-->>A: 200 { valid, receipt_hash, tx_hash, error }
 ```
 
-**Liability logic:**
-- Receipt **VALID** → inference reproduced exactly → the prompt drove the output → **human responsible**
-- Receipt **INVALID** → output can't be reproduced → model was tampered or compromised → **liability shifts**
-
-See [`agentic/blueprints/SERVICE_BLUEPRINT.md`](agentic/blueprints/SERVICE_BLUEPRINT.md) for the full design.
+- Receipt **VALID** → inference reproduced exactly
+- Receipt **INVALID** → output cannot be reproduced
 
 ## Stack
 
@@ -181,7 +178,7 @@ uv run ree-oracle verify test-receipts/reproducible-receipt.json
 uv run ree-oracle verify <receipt.json> --oracle-url http://other:8765 --private-key 0x...
 ```
 
-The private key is read from `ORACLE_CLIENT_PRIVATE_KEY` in `.env` automatically.
+The private key is read from `ORACLE_CLIENT_PRIVATE_KEY` or `CLIENT_PRIVATE_KEY` in `.env` automatically.
 
 `verify` prints step-by-step progress to stderr and final JSON to stdout, so it composes cleanly:
 
@@ -191,7 +188,7 @@ uv run ree-oracle verify receipt.json | jq .valid
 
 ## Testing
 
-Sample receipts are in `test-receipts/` — all generated with `Qwen/Qwen3-0.6B`, `operation_set: reproducible`.
+Sample receipts are in `test-receipts/` — generated with `Qwen/Qwen3-0.6B`. Use `reproducible-receipt.json` for end-to-end tests; `non-reproducible-receipt.json` to test the INVALID path.
 
 ### Generate your own receipt
 
