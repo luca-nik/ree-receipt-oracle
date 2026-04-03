@@ -30,7 +30,7 @@ def _load_env(env_file: Optional[str]) -> None:
 
 def _resolve_key(private_key: Optional[str]) -> Optional[str]:
     import os
-    return private_key or os.environ.get("ORACLE_CLIENT_PRIVATE_KEY")
+    return private_key or os.environ.get("ORACLE_CLIENT_PRIVATE_KEY") or os.environ.get("CLIENT_PRIVATE_KEY")
 
 
 def _load_receipt(receipt_file: Path) -> dict:
