@@ -1,0 +1,45 @@
+{
+  "version": "1.1.0",
+  "ree_version": "0.1.0",
+  "model": {
+    "name": "Qwen/Qwen3-0.6B",
+    "commit_hash": "c1899de289a04d12100db370d81485cdf75e47ca",
+    "config_hash": "sha256:01a2cd6eaa6ffadcfbf29bf5de383834dde68122b10edc73873d4a06b6758723"
+  },
+  "input": {
+    "prompt": "What is 2 + 2? Show your reasoning step by step.",
+    "prompt_hash": "sha256:5ab273c7b490ad51a15ef7b604cbcb98b8c3187cd677010f318e23c1a44bb0df",
+    "parameters": {
+      "max_new_tokens": 50,
+      "temperature": 1.0,
+      "top_k": 50,
+      "top_p": 1.0,
+      "min_p": null,
+      "repetition_penalty": 1.0,
+      "seed": 12345,
+      "operation_set": "default",
+      "rand_algorithm": "default",
+      "do_sample": true,
+      "eos_token": 151645,
+      "short_circuit_length": null,
+      "short_circuit_token": null,
+      "use_kv_cache": true,
+      "pad_token": 151645,
+      "vocab_size": 151936
+    },
+    "parameters_hash": "sha256:7da18a8599a9f93b28e02ddd267444cc7ba2409ce4fb3ed23c5ee9ac4d866ffe"
+  },
+  "output": {
+    "tokens_hash": "sha256:523e812b849985a6b5084dbbf42ac864f0a50b88ab2b9d4c6c73de33a73bedb1",
+    "token_count": 50,
+    "finish_reason": "max_length",
+    "text_output": " To what value can it be written as a combination of 35 and 75? Let's say, when a third person added 2utron? \n\nBut, the questions about this seem a bit disjointed in the question, but based"
+  },
+  "execution": {
+    "device_type": "cpu",
+    "device_name": "aarch64"
+  },
+  "hashes": {
+    "receipt_hash": "sha256:ca90bd3ff7d36f6cebf29b2d84c244b185e3ceeb38e949e5813d52e07b6b836e"
+  }
+}
